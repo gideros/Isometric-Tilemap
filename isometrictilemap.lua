@@ -1,3 +1,4 @@
+---with TILE FLIP SUPPORT
 IsometricTileMap = Core.class(Sprite)
 
 function IsometricTileMap:init(width, height, 
@@ -68,7 +69,7 @@ function IsometricTileMap:init(width, height,
 	end
 end
 
-function IsometricTileMap:setTile(x, y, tx, ty)
+function IsometricTileMap:setTile(x, y, tx, ty, flip)
 	local tilewidth = self.tilewidth
 	local tileheight = self.tileheight
 	local displaywidth = self.displaywidth
@@ -90,9 +91,28 @@ function IsometricTileMap:setTile(x, y, tx, ty)
 	local tx2 = self.marginx + (tx - 1) * (tilewidth + self.spacingx)
 	local ty2 = self.marginy + (ty - 1) * (tileheight + self.spacingy)
 	
-	mesh:setTextureCoordinates(vert, tx2, ty2, 
-							   vert + 1, tx2 + tilewidth, ty2,
-							   vert + 2, tx2 + tilewidth, ty2 + tileheight,
-							   vert + 3, tx2, ty2 + tileheight)
+ -- print("FLIP:",flip) 
+  if flip == 4 then --FLIP.HORIZONTAL
+      mesh:setTextureCoordinates(vert, tx2 + tilewidth, ty2,
+								 vert + 1, tx2, ty2,
+								 vert + 2, tx2, ty2 + tileheight,
+								 vert + 3, tx2 + tilewidth, ty2 + tileheight)
+					 
+  elseif flip == 2 then --FLIP.VERTICAL
+      mesh:setTextureCoordinates(vert, tx2, ty2 + tileheight, 
+								 vert + 1, tx2 + tilewidth, ty2 + tileheight,
+								 vert + 2, tx2 + tilewidth, ty2,
+								 vert + 3, tx2, ty2)
+  elseif flip == 6 then --FLIP.DIAGONAL
+      mesh:setTextureCoordinates(vert, tx2 + tilewidth, ty2 + tileheight, 
+								 vert + 1, tx2, ty2 + tileheight,
+								 vert + 2, tx2, ty2,
+								 vert + 3, tx2 + tilewidth, ty2 )		 
+  else  --NO FLIP
+      mesh:setTextureCoordinates(vert, tx2, ty2, 
+								 vert + 1, tx2 + tilewidth, ty2,
+								 vert + 2, tx2 + tilewidth, ty2 + tileheight,
+								 vert + 3, tx2, ty2 + tileheight)
+  end
 end
 
