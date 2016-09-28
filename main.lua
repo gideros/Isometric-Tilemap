@@ -1,5 +1,3 @@
-require "bit"
-
 local function load(filename)
 	local tilemap = Sprite.new()
 -- Bits on the far end of the 32-bit global tile ID are used for tile flags (flip, rotate)
@@ -46,20 +44,17 @@ local FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 				local i = x + (y - 1) * layer.width
 				local gid = layer.data[i]
         -- If not empty tile
-			local flipHor
-			local flipVer
-			local flipDia
 				if gid ~= 0 then
 					-- Read flipping flags
-					flipHor = bit.band(gid, FLIPPED_HORIZONTALLY_FLAG)
-					flipVer = bit.band(gid, FLIPPED_VERTICALLY_FLAG)
-					flipDia = bit.band(gid, FLIPPED_DIAGONALLY_FLAG)
+					 flipHor = gid&FLIPPED_HORIZONTALLY_FLAG 
+					 flipVer = gid&FLIPPED_VERTICALLY_FLAG 
+					 flipDia = gid&FLIPPED_DIAGONALLY_FLAG 
 					-- Convert flags to gideros style
 					if(flipHor ~= 0) then flipHor = 4 end --TileMap.FLIP_HORIZONTAL end
 					if(flipVer ~= 0) then flipVer = 2 end --TileMap.FLIP_VERTICAL end
 					if(flipDia ~= 0) then flipDia = 1 end --TileMap.FLIP_DIAGONAL end
 					-- Clear the flags from gid so other information is healthy
-					gid = bit.band(gid, bit.bnot(bit.bor(FLIPPED_HORIZONTALLY_FLAG, FLIPPED_VERTICALLY_FLAG, FLIPPED_DIAGONALLY_FLAG)))
+					gid = gid&(~(FLIPPED_HORIZONTALLY_FLAG|FLIPPED_VERTICALLY_FLAG|FLIPPED_DIAGONALLY_FLAG))
 				end
         
 				local tileset = gid2tileset(map, gid)
@@ -88,7 +83,7 @@ local FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 					local ty = math.floor((gid - tileset.firstgid) / tileset.sizex) + 1
 					
           -- Set the tile with flip info
-					tilemap:setTile(x, y, tx, ty, bit.bor(flipHor, flipVer, flipDia))
+					tilemap:setTile(x, y, tx, ty, flipHor|flipVer|flipDia)
 					-- Reset vars, so they dont confuse us in the next iteration
 					flipHor, flipVer, flipDia = 0, 0, 0
           
